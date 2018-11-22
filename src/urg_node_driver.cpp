@@ -89,7 +89,8 @@ void UrgNode::initSetup()
   }
   else
   {
-    laser_pub_ = nh_.advertise<sensor_msgs::LaserScan>("scan", 20);
+    //laser_pub_ = nh_.advertise<sensor_msgs::LaserScan>("scan", 20);
+    rt_laser_pub_ = new realtime_tools::RealtimePublisher<sensor_msgs::LaserScan>(nh_, "scan", 1); 
   }
 
   status_service_ = nh_.advertiseService("update_laser_status", &UrgNode::statusCallback, this);
@@ -528,7 +529,12 @@ void UrgNode::scanThread()
           const sensor_msgs::LaserScanPtr msg(new sensor_msgs::LaserScan());
           if (urg_->grabScan(msg))
           {
-            laser_pub_.publish(msg);
+            //laser_pub_.publish(msg);
+	    if (rt_laser_pub_->trylock()){
+               rt_laser_pub_->msg_=*msg;
+               rt_laser_pub_->unlockAndPublish();
+             }
+
             laser_freq_->tick();
           }
           else

@@ -43,6 +43,7 @@
 #include <diagnostic_updater/publisher.h>
 #include <urg_node/URGConfig.h>
 #include <std_srvs/Trigger.h>
+#include <realtime_tools/realtime_publisher.h>
 
 #include "urg_node/urg_c_wrapper.h"
 
@@ -127,6 +128,7 @@ private:
   volatile bool service_yield_;
 
   ros::Publisher laser_pub_;
+  realtime_tools::RealtimePublisher<sensor_msgs::LaserScan>* rt_laser_pub_;
   laser_proc::LaserPublisher echoes_pub_;
   ros::Publisher status_pub_;
 
